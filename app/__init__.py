@@ -30,9 +30,10 @@ def create_app(config_name):
     api = Api()
     db.init_app(app)
 
-    from .resources import MonsterResource
+    from .resources import MonsterResource, MonsterListResource
 
-    api.add_resource(MonsterResource, '/<int:id>', endpoint='monster')
+    api.add_resource(MonsterListResource, '/monsters', endpoint='monsters')
+    api.add_resource(MonsterResource, '/monster/<int:id>', endpoint='monster')
     api.init_app(app)
     app.after_request(add_cors_headers)
 
