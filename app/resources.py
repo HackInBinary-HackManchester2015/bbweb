@@ -1,3 +1,4 @@
+import random
 from flask import jsonify
 from . import models, schemas
 from flask.ext.restful import Resource, reqparse
@@ -32,12 +33,17 @@ class MonsterListResource(Resource):
         if args['userlevel']:
             userlevel = args['userlevel']
 
-            monster = models.Monster.query.filter(
-                    models.Monster.level == userlevel
-                    ).first()
+            monsters = models.Monster.query.filter(
+                    models.Monster.level >= int(userlevel) - 1,
+                    models.Monster.level <= int(userlevel) + 1
+                    ).all()
 
-            if monster:
-                result = MonsterResource.monster_schema.dump(monster)
+            if monsters:
+                selected = random.choice(monsters)
+                result = MonsterResource.monster_schema.dump(selected)
                 return jsonify(result.data)
             else:
                 return jsonify(result='not yet implemented')
+        else:
+            number_of_monsters = models.Monster.query.count()
+            return jsonify(numMonsters=number_of_monsters)
